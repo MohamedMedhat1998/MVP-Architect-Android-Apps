@@ -2,11 +2,12 @@ package com.androidwave.cleancode.di.module;
 
 import android.content.Context;
 
+import com.androidwave.cleancode.data.network.pojo.FeedItem;
 import com.androidwave.cleancode.di.ActivityContext;
 import com.androidwave.cleancode.di.PerActivity;
-import com.androidwave.cleancode.ui.login.LoginMvpPresenter;
-import com.androidwave.cleancode.ui.login.LoginMvpView;
-import com.androidwave.cleancode.ui.login.LoginPresenter;
+import com.androidwave.cleancode.ui.details.DetailsMvpPresenter;
+import com.androidwave.cleancode.ui.details.DetailsMvpView;
+import com.androidwave.cleancode.ui.details.DetailsPresenter;
 import com.androidwave.cleancode.ui.main.MainMvpPresenter;
 import com.androidwave.cleancode.ui.main.MainMvpView;
 import com.androidwave.cleancode.ui.main.MainPresenter;
@@ -60,14 +61,13 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    LoginMvpPresenter<LoginMvpView> provideLoginPresenter(LoginPresenter<LoginMvpView> presenter) {
+    MainMvpPresenter<MainMvpView> provideMainPresenter(MainPresenter<MainMvpView> presenter) {
         return presenter;
     }
 
-
     @Provides
     @PerActivity
-    MainMvpPresenter<MainMvpView> provideMainPresenter(MainPresenter<MainMvpView> presenter) {
+    DetailsMvpPresenter<DetailsMvpView> provideDetailsPresenter(DetailsPresenter<DetailsMvpView> presenter){
         return presenter;
     }
 

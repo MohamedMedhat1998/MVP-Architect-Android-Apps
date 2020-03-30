@@ -1,9 +1,7 @@
 package com.androidwave.cleancode.data.network;
 
+import com.androidwave.cleancode.data.network.pojo.Country;
 import com.androidwave.cleancode.data.network.pojo.FeedItem;
-import com.androidwave.cleancode.data.network.pojo.LoginRequest;
-import com.androidwave.cleancode.data.network.pojo.UserProfile;
-import com.androidwave.cleancode.data.network.pojo.WrapperResponse;
 
 import java.util.List;
 
@@ -15,20 +13,23 @@ import io.reactivex.Single;
 @Singleton
 public class RestApiManager implements RestApiHelper {
 
-    NetworkService mService;
+    private CoronaNetworkService mCoronaNetworkService;
+    private CountryNetworkService mCountryNetworkService;
 
     @Inject
-    public RestApiManager(NetworkService apiService) {
-        mService = apiService;
+    public RestApiManager(CoronaNetworkService coronaApiService, CountryNetworkService countryApiService) {
+        mCoronaNetworkService = coronaApiService;
+        mCountryNetworkService = countryApiService;
+    }
+
+
+    @Override
+    public Single<FeedItem> getStatistics() {
+        return mCoronaNetworkService.getStatistics();
     }
 
     @Override
-    public Single<WrapperResponse<UserProfile>> doLoginApiCall(LoginRequest request) {
-        return mService.doLoginApiCall(request);
-    }
-
-    @Override
-    public Single<WrapperResponse<List<FeedItem>>> getFeedList() {
-        return mService.getFeedList();
+    public Single<List<Country>> getCountryByName(String name) {
+        return mCountryNetworkService.getCountryByName(name);
     }
 }

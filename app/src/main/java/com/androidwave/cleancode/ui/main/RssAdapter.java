@@ -1,22 +1,22 @@
 package com.androidwave.cleancode.ui.main;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.androidwave.cleancode.R;
-import com.androidwave.cleancode.data.network.pojo.FeedItem;
+import com.androidwave.cleancode.data.network.pojo.SimplifiedFeedItem;
 import com.androidwave.cleancode.ui.base.BaseViewHolder;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created on : Feb 11, 2019
@@ -28,10 +28,12 @@ public class RssAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public static final int VIEW_TYPE_NORMAL = 1;
 
     private Callback mCallback;
-    private List<FeedItem> mFeedItemList;
+    private OnItemClickedListener onItemClickedListener;
+    private List<SimplifiedFeedItem> mFeedItems;
 
-    public RssAdapter(List<FeedItem> sportList) {
-        mFeedItemList = sportList;
+
+    public RssAdapter(List<SimplifiedFeedItem> countryList) {
+        mFeedItems = countryList;
     }
 
     public void setCallback(Callback callback) {
@@ -49,7 +51,7 @@ public class RssAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         switch (viewType) {
             case VIEW_TYPE_NORMAL:
                 return new ViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_feed, parent, false));
+                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_country, parent, false));
             case VIEW_TYPE_EMPTY:
             default:
                 return new EmptyViewHolder(
@@ -59,7 +61,7 @@ public class RssAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (mFeedItemList != null && mFeedItemList.size() > 0) {
+        if (mFeedItems != null && mFeedItems.size() > 0) {
             return VIEW_TYPE_NORMAL;
         } else {
             return VIEW_TYPE_EMPTY;
@@ -68,16 +70,16 @@ public class RssAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public int getItemCount() {
-        if (mFeedItemList != null && mFeedItemList.size() > 0) {
-            return mFeedItemList.size();
-        } else {
-            return 1;
-        }
+        return mFeedItems.size();
     }
 
-    public void addItems(List<FeedItem> sportList) {
-        mFeedItemList.addAll(sportList);
+    public void setData(List<SimplifiedFeedItem> countryList) {
+        mFeedItems = countryList;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickedListener(OnItemClickedListener onItemClickedListener) {
+        this.onItemClickedListener = onItemClickedListener;
     }
 
     public interface Callback {
@@ -86,62 +88,43 @@ public class RssAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public class ViewHolder extends BaseViewHolder {
 
-        ImageView thumbnail;
-        TextView titleTextView;
-        TextView linkTextView;
-        TextView descriptionTextView;
-
+        @BindView(R.id.ivFlag)
+        ImageView ivFlag;
+        @BindView(R.id.tvCountryName)
+        TextView tvCountryName;
+        @BindView(R.id.tvTotalCases)
+        TextView tvTotalCases;
+        @BindView(R.id.tvDeath)
+        TextView tvDeath;
+        @BindView(R.id.tvRecovered)
+        TextView tvRecovered;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            thumbnail = itemView.findViewById(R.id.imageViewThumbnail);
-            titleTextView = itemView.findViewById(R.id.textViewTitle);
-            linkTextView = itemView.findViewById(R.id.textViewUrl);
-            descriptionTextView = itemView.findViewById(R.id.textViewDescription);
+            ButterKnife.bind(this, itemView);
         }
 
+        @Override
         protected void clear() {
-            thumbnail.setImageDrawable(null);
-            titleTextView.setText("");
-            linkTextView.setText("");
-            descriptionTextView.setText("");
+
         }
+
 
         public void onBind(int position) {
             super.onBind(position);
 
-            final FeedItem mFeedItem = mFeedItemList.get(position);
+            SimplifiedFeedItem feedItem = mFeedItems.get(position);
 
-            if (mFeedItem.getThumbnail() != null) {
-                Glide.with(itemView.getContext())
-                        .load(mFeedItem.getThumbnail())
-                        .into(thumbnail);
-            }
+            tvCountryName.setText(feedItem.getCountryName());
+            tvTotalCases.setText("" + feedItem.getTotalCases());
+            tvDeath.setText("" + feedItem.getDeaths());
+            tvRecovered.setText("" + feedItem.getRecovered());
+            Glide.with(itemView.getContext())
+                    .load(feedItem.getFlagLink())
+                    .into(ivFlag);
 
-            if (mFeedItem.getTitle() != null) {
-                titleTextView.setText(mFeedItem.getTitle());
-            }
-
-            if (mFeedItem.getLink() != null) {
-                linkTextView.setText(mFeedItem.getLink());
-            }
-
-            if (mFeedItem.getDescription() != null) {
-                descriptionTextView.setText(mFeedItem.getDescription());
-            }
-
-            linkTextView.setOnClickListener(v -> {
-                if (mFeedItem.getLink() != null) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                        intent.setData(Uri.parse(mFeedItem.getLink()));
-                        itemView.getContext().startActivity(intent);
-                    } catch (Exception e) {
-                        Log.e(TAG, "onClick: Image url is not correct");
-                    }
-                }
+            itemView.setOnClickListener(view -> {
+                onItemClickedListener.onItemClicked(feedItem);
             });
         }
     }

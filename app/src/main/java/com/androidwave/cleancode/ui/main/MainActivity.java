@@ -7,22 +7,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.androidwave.cleancode.R;
-import com.androidwave.cleancode.data.network.pojo.FeedItem;
+import com.androidwave.cleancode.data.network.pojo.SimplifiedFeedItem;
 import com.androidwave.cleancode.ui.base.BaseActivity;
+import com.androidwave.cleancode.ui.details.DetailsActivity;
 import com.androidwave.cleancode.utils.DividerItemDecoration;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements MainMvpView, RssAdapter.Callback {
-
-    RecyclerView mRecyclerView;
 
     @Inject
     MainMvpPresenter<MainMvpView> mPresenter;
@@ -31,6 +33,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, RssAdapte
     RssAdapter mRssAdapter;
 
     LinearLayoutManager mLayoutManager;
+    @BindView(R.id.recyclerViewFeed)
+    RecyclerView recyclerViewFeed;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -41,6 +45,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, RssAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         getActivityComponent().inject(this);
         mPresenter.onAttach(MainActivity.this);
         setUp();
@@ -49,12 +54,20 @@ public class MainActivity extends BaseActivity implements MainMvpView, RssAdapte
 
     @Override
     protected void setUp() {
-        mRecyclerView = findViewById(R.id.recyclerViewFeed);
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(RecyclerView.VERTICAL);
         Drawable dividerDrawable = ContextCompat.getDrawable(this, R.drawable.divider_drawable);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        recyclerViewFeed.addItemDecoration(new DividerItemDecoration(dividerDrawable));
+        recyclerViewFeed.setLayoutManager(mLayoutManager);
+        mRssAdapter.setOnItemClickedListener(item -> {
+            Intent i = new Intent(MainActivity.this, DetailsActivity.class);
+            i.putExtra("flag", item.getFlagLink());
+            i.putExtra("name", item.getCountryName());
+            i.putExtra("total", item.getTotalCases());
+            i.putExtra("death", item.getDeaths());
+            i.putExtra("recovered", item.getRecovered());
+            startActivity(i);
+        });
         mPresenter.onViewPrepared();
     }
 
@@ -81,9 +94,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, RssAdapte
     }
 
     @Override
-    public void updateFeed(List<FeedItem> feedItemList) {
-        mRecyclerView.setAdapter(mRssAdapter);
-        mRssAdapter.addItems(feedItemList);
+    public void updateFeed(List<SimplifiedFeedItem> feedItems) {
+        recyclerViewFeed.setAdapter(mRssAdapter);
+        mRssAdapter.setData(feedItems);
     }
 
     @Override

@@ -5,10 +5,8 @@ import android.content.Context;
 import com.androidwave.cleancode.data.db.AppDatabase;
 import com.androidwave.cleancode.data.db.model.User;
 import com.androidwave.cleancode.data.network.RestApiHelper;
+import com.androidwave.cleancode.data.network.pojo.Country;
 import com.androidwave.cleancode.data.network.pojo.FeedItem;
-import com.androidwave.cleancode.data.network.pojo.LoginRequest;
-import com.androidwave.cleancode.data.network.pojo.UserProfile;
-import com.androidwave.cleancode.data.network.pojo.WrapperResponse;
 import com.androidwave.cleancode.data.prefs.PreferencesHelper;
 import com.androidwave.cleancode.data.utils.LoggedInMode;
 import com.androidwave.cleancode.di.ApplicationContext;
@@ -98,16 +96,6 @@ public class BaseDataManager implements DataManager {
     @Override
     public User findByName(String first, String last) {
         return mDatabase.userDao().findByName(first, last);
-    }
-
-    @Override
-    public Single<WrapperResponse<UserProfile>> doLoginApiCall(LoginRequest request) {
-        return mApiHelper.doLoginApiCall(request);
-    }
-
-    @Override
-    public Single<WrapperResponse<List<FeedItem>>> getFeedList() {
-        return mApiHelper.getFeedList();
     }
 
     @Override
@@ -203,5 +191,15 @@ public class BaseDataManager implements DataManager {
     @Override
     public void logoutUser() {
         mPreferencesHelper.logoutUser();
+    }
+
+    @Override
+    public Single<FeedItem> getStatistics() {
+        return mApiHelper.getStatistics();
+    }
+
+    @Override
+    public Single<List<Country>> getCountryByName(String name) {
+        return mApiHelper.getCountryByName(name);
     }
 }

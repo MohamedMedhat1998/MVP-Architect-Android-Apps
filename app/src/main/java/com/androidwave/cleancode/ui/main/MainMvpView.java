@@ -1,6 +1,7 @@
 package com.androidwave.cleancode.ui.main;
 
 import com.androidwave.cleancode.data.network.pojo.FeedItem;
+import com.androidwave.cleancode.data.network.pojo.SimplifiedFeedItem;
 import com.androidwave.cleancode.ui.base.MvpView;
 
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.List;
  * Author     : AndroidWave
  */
 public interface MainMvpView extends MvpView {
-    void updateFeed(List<FeedItem> feedItemList);
+    void updateFeed(List<SimplifiedFeedItem> feedItem);
 }

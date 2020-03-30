@@ -7,7 +7,9 @@ import com.androidwave.cleancode.BuildConfig;
 import com.androidwave.cleancode.data.BaseDataManager;
 import com.androidwave.cleancode.data.DataManager;
 import com.androidwave.cleancode.data.db.AppDatabase;
-import com.androidwave.cleancode.data.network.NetworkService;
+import com.androidwave.cleancode.data.network.AuthenticationInterceptor;
+import com.androidwave.cleancode.data.network.CoronaNetworkService;
+import com.androidwave.cleancode.data.network.CountryNetworkService;
 import com.androidwave.cleancode.data.network.RestApiHelper;
 import com.androidwave.cleancode.data.network.RestApiManager;
 import com.androidwave.cleancode.data.prefs.PreferencesHelper;
@@ -18,12 +20,14 @@ import com.androidwave.cleancode.di.DatabaseInfo;
 import com.androidwave.cleancode.di.PreferenceInfo;
 import com.androidwave.cleancode.root.AppConstant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -64,7 +68,7 @@ public class ApplicationModule {
     @Provides
     @ApiInfo
     String provideApiKey() {
-        return BuildConfig.API_KEY;
+        return BuildConfig.CORONA_API_KEY;
     }
 
     @Provides
@@ -103,14 +107,21 @@ public class ApplicationModule {
      * @return HTTTP Client
      */
     @Provides
-    public OkHttpClient provideClient() {
+    public OkHttpClient provideClient(Map<String, String> headers) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        if (headers != null) {
+            AuthenticationInterceptor authenticationInterceptor = new AuthenticationInterceptor(headers);
+            return new OkHttpClient.Builder()
+                    .addInterceptor(interceptor)
+                    .addInterceptor(authenticationInterceptor)
+                    .build();
+        } else {
+            return new OkHttpClient.Builder()
+                    .addInterceptor(interceptor)
+                    .build();
+        }
 
-        return new OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(chain -> {
-            Request request = chain.request();
-            return chain.proceed(request);
-        }).build();
     }
 
     /**
@@ -137,7 +148,15 @@ public class ApplicationModule {
      * @return ApiService instances
      */
     @Provides
-    public NetworkService provideApiService() {
-        return provideRetrofit(BuildConfig.BASE_URL, provideClient()).create(NetworkService.class);
+    public CoronaNetworkService provideCoronaApiService() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-rapidapi-host", BuildConfig.CORONA_API_HOST);
+        headers.put("x-rapidapi-key", BuildConfig.CORONA_API_KEY);
+        return provideRetrofit(BuildConfig.CORONA_BASE_URL, provideClient(headers)).create(CoronaNetworkService.class);
+    }
+
+    @Provides
+    public CountryNetworkService provideCountryApiService() {
+        return provideRetrofit(BuildConfig.COUNTRY_BASE_URL, provideClient(null)).create(CountryNetworkService.class);
     }
 }
