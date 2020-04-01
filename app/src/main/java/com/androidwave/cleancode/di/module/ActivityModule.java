@@ -11,6 +11,9 @@ import com.androidwave.cleancode.ui.main.MainMvpPresenter;
 import com.androidwave.cleancode.ui.main.MainMvpView;
 import com.androidwave.cleancode.ui.main.MainPresenter;
 import com.androidwave.cleancode.ui.main.RssAdapter;
+import com.androidwave.cleancode.ui.sign_up.SignUpMvpPresenter;
+import com.androidwave.cleancode.ui.sign_up.SignUpMvpView;
+import com.androidwave.cleancode.ui.sign_up.SignUpPresenter;
 import com.androidwave.cleancode.utils.rx.AppSchedulerProvider;
 import com.androidwave.cleancode.utils.rx.SchedulerProvider;
 
@@ -71,6 +74,11 @@ public class ActivityModule {
         return presenter;
     }
 
+    @Provides
+    @PerActivity
+    SignUpMvpPresenter<SignUpMvpView> provideSignUpPresenter(SignUpPresenter<SignUpMvpView> presenter) {
+        return presenter;
+    }
 
     @Provides
     RssAdapter provideRssAdapter() {

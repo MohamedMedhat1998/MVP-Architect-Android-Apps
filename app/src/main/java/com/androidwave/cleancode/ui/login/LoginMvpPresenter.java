@@ -5,4 +5,5 @@ import com.androidwave.cleancode.ui.base.MvpPresenter;
 
 public interface LoginMvpPresenter<V extends LoginMvpView> extends MvpPresenter<V> {
     void onLoginClick();
+    void onSignUpClick();
 }

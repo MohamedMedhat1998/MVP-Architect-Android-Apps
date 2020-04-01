@@ -22,7 +22,7 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
     @Override
     public void onLoginClick() {
         if (getMvpView() != null) {
-            if (getMvpView().getEmail().trim().equals("") || getMvpView().getPassword().trim().equals("")) {
+            if (getMvpView().getPhone().trim().equals("") || getMvpView().getPassword().trim().equals("")) {
                 getMvpView().showInputError();
             } else {
                 getMvpView().showLoading();
@@ -46,7 +46,10 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
             }
 
         }
+    }
 
-
+    @Override
+    public void onSignUpClick() {
+        getMvpView().navigateToSignUp();
     }
 }

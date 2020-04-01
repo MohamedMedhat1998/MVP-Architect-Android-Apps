@@ -5,8 +5,9 @@ import com.androidwave.cleancode.ui.base.MvpView;
 
 public interface LoginMvpView extends MvpView {
     void onLoginSuccess(UserProfile mUser);
+    void navigateToSignUp();
 
-    String getEmail();
+    String getPhone();
 
     String getPassword();
 
@@ -14,5 +15,5 @@ public interface LoginMvpView extends MvpView {
 
     void setPassword(String userId);
 
-    void setEmail(String password);
+    void setPhone(String phone);
 }

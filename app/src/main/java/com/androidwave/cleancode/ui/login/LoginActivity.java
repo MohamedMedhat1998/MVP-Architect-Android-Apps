@@ -2,16 +2,21 @@ package com.androidwave.cleancode.ui.login;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatButton;
+
 import com.androidwave.cleancode.R;
-import com.androidwave.cleancode.data.network.pojo.LoginRequest;
 import com.androidwave.cleancode.data.network.pojo.UserProfile;
 import com.androidwave.cleancode.ui.base.BaseActivity;
 import com.androidwave.cleancode.ui.main.MainActivity;
+import com.androidwave.cleancode.ui.sign_up.SignUpActivity;
 
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A login screen that offers login via email/password.
@@ -20,8 +25,14 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     @Inject
     LoginMvpPresenter<LoginMvpView> mPresenter;
 
-    TextView mEmail, mPassword;
-    Button loginButton;
+    @BindView(R.id.input_phone)
+    EditText inputPhone;
+    @BindView(R.id.input_password)
+    EditText inputPassword;
+    @BindView(R.id.btn_login)
+    AppCompatButton btnLogin;
+    @BindView(R.id.link_signup)
+    TextView linkSignup;
 
 
     // UI references.
@@ -29,6 +40,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
         getActivityComponent().inject(this);
         mPresenter.onAttach(LoginActivity.this);
         setUp();
@@ -36,11 +48,11 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     protected void setUp() {
-        mEmail = findViewById(R.id.input_email);
-        mPassword = findViewById(R.id.input_password);
-        loginButton = findViewById(R.id.btn_login);
-        loginButton.setOnClickListener(v -> {
-          mPresenter.onLoginClick();
+        btnLogin.setOnClickListener(v -> {
+            mPresenter.onLoginClick();
+        });
+        linkSignup.setOnClickListener(view -> {
+            mPresenter.onSignUpClick();
         });
     }
 
@@ -56,13 +68,18 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     }
 
     @Override
-    public String getEmail() {
-        return mEmail.getText().toString();
+    public void navigateToSignUp() {
+        startActivity(SignUpActivity.getStartIntent(this));
+    }
+
+    @Override
+    public String getPhone() {
+        return inputPhone.getText().toString();
     }
 
     @Override
     public String getPassword() {
-        return mPassword.getText().toString();
+        return inputPassword.getText().toString();
     }
 
     @Override
@@ -72,12 +89,12 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     public void setPassword(String password) {
-        mEmail.setText(password);
+        inputPassword.setText(password);
     }
 
     @Override
-    public void setEmail(String email) {
-        mPassword.setText(email);
+    public void setPhone(String phone) {
+        inputPhone.setText(phone);
     }
 
 
