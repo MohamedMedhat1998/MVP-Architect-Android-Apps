@@ -5,6 +5,7 @@ import android.content.Context;
 import com.androidwave.cleancode.data.db.AppDatabase;
 import com.androidwave.cleancode.data.db.model.User;
 import com.androidwave.cleancode.data.network.RestApiHelper;
+import com.androidwave.cleancode.data.network.firebase.FirebaseHelper;
 import com.androidwave.cleancode.data.network.pojo.FeedItem;
 import com.androidwave.cleancode.data.network.pojo.LoginRequest;
 import com.androidwave.cleancode.data.network.pojo.UserProfile;
@@ -27,16 +28,19 @@ public class BaseDataManager implements DataManager {
     private final AppDatabase mDatabase;
     private final PreferencesHelper mPreferencesHelper;
     private final RestApiHelper mApiHelper;
+    private final FirebaseHelper mFirebaseHelper;
 
     @Inject
     public BaseDataManager(@ApplicationContext Context context,
                            AppDatabase database,
                            PreferencesHelper preferencesHelper,
-                           RestApiHelper apiHelper) {
+                           RestApiHelper apiHelper,
+                           FirebaseHelper firebaseHelper) {
         mContext = context;
         mDatabase = database;
         mPreferencesHelper = preferencesHelper;
         mApiHelper = apiHelper;
+        mFirebaseHelper = firebaseHelper;
     }
 
     @Override
@@ -203,5 +207,10 @@ public class BaseDataManager implements DataManager {
     @Override
     public void logoutUser() {
         mPreferencesHelper.logoutUser();
+    }
+
+    @Override
+    public void register(com.androidwave.cleancode.data.network.pojo.User user) {
+        mFirebaseHelper.register(user);
     }
 }

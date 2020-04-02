@@ -16,6 +16,7 @@ import com.androidwave.cleancode.ui.sign_up.SignUpMvpView;
 import com.androidwave.cleancode.ui.sign_up.SignUpPresenter;
 import com.androidwave.cleancode.utils.rx.AppSchedulerProvider;
 import com.androidwave.cleancode.utils.rx.SchedulerProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -84,4 +85,5 @@ public class ActivityModule {
     RssAdapter provideRssAdapter() {
         return new RssAdapter(new ArrayList<>());
     }
+
 }

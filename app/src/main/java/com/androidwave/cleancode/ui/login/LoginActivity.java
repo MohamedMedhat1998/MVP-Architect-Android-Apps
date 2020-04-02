@@ -1,7 +1,8 @@
 package com.androidwave.cleancode.ui.login;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -54,6 +55,10 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
         linkSignup.setOnClickListener(view -> {
             mPresenter.onSignUpClick();
         });
+    }
+
+    public static Intent getStartIntent(Context context) {
+        return new Intent(context, LoginActivity.class);
     }
 
     @Override

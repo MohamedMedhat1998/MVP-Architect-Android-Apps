@@ -2,10 +2,11 @@ package com.androidwave.cleancode.data;
 
 import com.androidwave.cleancode.data.db.dao.UserDao;
 import com.androidwave.cleancode.data.network.RestApiHelper;
+import com.androidwave.cleancode.data.network.firebase.FirebaseHelper;
 import com.androidwave.cleancode.data.prefs.PreferencesHelper;
 import com.androidwave.cleancode.data.utils.LoggedInMode;
 
-public interface DataManager extends UserDao, PreferencesHelper, RestApiHelper {
+public interface DataManager extends UserDao, PreferencesHelper, RestApiHelper, FirebaseHelper {
     void updateApiHeader(Long userId, String accessToken);
 
     void setUserLoggedOut();

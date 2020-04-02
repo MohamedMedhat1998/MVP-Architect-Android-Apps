@@ -10,6 +10,8 @@ import com.androidwave.cleancode.data.db.AppDatabase;
 import com.androidwave.cleancode.data.network.NetworkService;
 import com.androidwave.cleancode.data.network.RestApiHelper;
 import com.androidwave.cleancode.data.network.RestApiManager;
+import com.androidwave.cleancode.data.network.firebase.FirebaseHelper;
+import com.androidwave.cleancode.data.network.firebase.FirebaseManager;
 import com.androidwave.cleancode.data.prefs.PreferencesHelper;
 import com.androidwave.cleancode.data.prefs.PreferencesManager;
 import com.androidwave.cleancode.di.ApiInfo;
@@ -17,6 +19,7 @@ import com.androidwave.cleancode.di.ApplicationContext;
 import com.androidwave.cleancode.di.DatabaseInfo;
 import com.androidwave.cleancode.di.PreferenceInfo;
 import com.androidwave.cleancode.root.AppConstant;
+import com.google.firebase.database.FirebaseDatabase;
 
 import javax.inject.Singleton;
 
@@ -139,5 +142,16 @@ public class ApplicationModule {
     @Provides
     public NetworkService provideApiService() {
         return provideRetrofit(BuildConfig.BASE_URL, provideClient()).create(NetworkService.class);
+    }
+
+    @Provides
+    public FirebaseHelper provideFirbaseHelper(FirebaseManager manager){
+        return manager;
+    }
+
+    @Provides
+    @Singleton
+    public FirebaseDatabase provideFirebaseDatabase(){
+        return FirebaseDatabase.getInstance();
     }
 }
