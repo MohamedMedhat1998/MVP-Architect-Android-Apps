@@ -11,6 +11,8 @@ public interface SignUpMvpView extends MvpView {
 
     String getConfirmPassword();
 
+    void onSuccess(String message);
+
     void navigateToLogin();
 
 }

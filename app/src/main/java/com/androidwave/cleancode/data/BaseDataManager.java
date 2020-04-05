@@ -12,6 +12,7 @@ import com.androidwave.cleancode.data.network.pojo.UserProfile;
 import com.androidwave.cleancode.data.network.pojo.WrapperResponse;
 import com.androidwave.cleancode.data.prefs.PreferencesHelper;
 import com.androidwave.cleancode.data.utils.LoggedInMode;
+import com.androidwave.cleancode.data.utils.RegisterResult;
 import com.androidwave.cleancode.di.ApplicationContext;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Single;
+import io.reactivex.subjects.Subject;
 
 public class BaseDataManager implements DataManager {
     private static final String TAG = "BaseDataManager";
@@ -210,7 +212,7 @@ public class BaseDataManager implements DataManager {
     }
 
     @Override
-    public void register(com.androidwave.cleancode.data.network.pojo.User user) {
-        mFirebaseHelper.register(user);
+    public Subject<RegisterResult> register(com.androidwave.cleancode.data.network.pojo.User user) {
+        return mFirebaseHelper.register(user);
     }
 }

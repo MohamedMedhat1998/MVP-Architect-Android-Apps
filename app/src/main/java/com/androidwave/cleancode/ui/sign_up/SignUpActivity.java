@@ -3,7 +3,6 @@ package com.androidwave.cleancode.ui.sign_up;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -76,8 +75,13 @@ public class SignUpActivity extends BaseActivity implements SignUpMvpView {
     }
 
     @Override
+    public void onSuccess(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void navigateToLogin() {
-        LoginActivity.getStartIntent(this);
+        startActivity(LoginActivity.getStartIntent(this));
     }
 
     @Override

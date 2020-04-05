@@ -2,6 +2,7 @@ package com.androidwave.cleancode.ui.sign_up;
 
 import com.androidwave.cleancode.data.DataManager;
 import com.androidwave.cleancode.data.network.pojo.User;
+import com.androidwave.cleancode.data.utils.RegisterResult;
 import com.androidwave.cleancode.ui.base.BasePresenter;
 import com.androidwave.cleancode.utils.rx.SchedulerProvider;
 
@@ -26,8 +27,19 @@ public class SignUpPresenter<V extends SignUpMvpView> extends BasePresenter<V> i
             if (!password.equals(confirmPassword)) {
                 getMvpView().onError("Password doesn't match");
             } else {
-                //TODO use RxJava
-                getDataManager().register(new User(name, phone, password));
+                getCompositeDisposable().add(getDataManager()
+                        .register(new User(name, phone, password))
+                        .subscribeOn(getSchedulerProvider().io())
+                        .observeOn(getSchedulerProvider().ui())
+                        .subscribe(response -> {
+                                    if (response == RegisterResult.SUCCESS) {
+                                        getMvpView().onSuccess("Successfully signed up");
+                                        getMvpView().navigateToLogin();
+                                    }
+                                }, error -> {
+                                    getMvpView().onError(error.getMessage());
+                                }
+                        ));
             }
         } else {
             getMvpView().onError("Please fill all the fields");
